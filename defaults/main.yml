@@ -1,0 +1,27 @@
+init_locale: en_US.UTF-8
+init_timezone: Europe/Moscow
+
+init_ssh_allowed_groups:
+  - sshusers
+init_ssh_config:
+  - { name: 'PasswordAuthentication', value: 'no' }
+  - { name: 'PermitRootLogin', value: 'no' }
+
+init_users: []
+#  - name: deploy
+#    group: sshusers
+#    groups: []
+#    home: '/home/deploy'
+#    is_sudoer: yes
+#    known_hosts:
+#      - github.com
+#      - git.cloud-team.ru
+#      - git.vseinstrumenti.net
+#    private_key:
+#    authorized_keys: []
+
+init_directories: []
+#  - path: /data/dir1
+#    owner: deploy
+#    group: sshusers
+#    mode: 0755
