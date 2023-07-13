@@ -15,9 +15,18 @@
     name: '{{ init_locale }}'
     state: present
 
-- name: Install NTPD packages
+- name: Install common packages
   apt: name='{{ item }}' state=latest
   loop:
+    - apt-transport-https
+    - git
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+    - mc
+    - nano
+    - software-properties-common
     - ntp
     - ntpdate
 
