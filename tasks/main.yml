@@ -1,0 +1,63 @@
+---
+
+- name: Update APT cache if the last one is more than 3600 seconds ago
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Set timezone to "{{ init_timezone }}"
+  timezone:
+    name: '{{ init_timezone }}'
+  notify: Restart cron
+
+- name: Ensure a locale "{{ init_locale }}" exists
+  locale_gen:
+    name: '{{ init_locale }}'
+    state: present
+
+- name: Install NTPD packages
+  apt: name='{{ item }}' state=latest
+  loop:
+    - ntp
+    - ntpdate
+
+- name: Enable NTPD serive
+  service: name=ntp state=started enabled=yes
+
+- name: Add sshers groups
+  group: name='{{ item }}' state=present
+  loop: '{{ init_ssh_allowed_groups }}'
+
+- name: Allow SSH access for sshers groups only
+  lineinfile: dest=/etc/ssh/sshd_config
+    regexp='^AllowGroups'
+    line='AllowGroups {{ init_ssh_allowed_groups | join(' ') }}'
+    state=present
+  notify: Restart ssh
+
+- name: Set ssh config options
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^{{ item.name }}'
+    line: "{{ item.name }} {{ item.value }}"
+    state: present
+  loop: '{{ init_ssh_config }}'
+  notify: Restart ssh
+
+- name: Install acl package
+  apt: name='acl' state=latest
+
+- include_tasks: add_user.yml
+  loop: '{{ init_users }}'
+  loop_control:
+    loop_var: init_user
+
+- name: Add directories
+  file:
+    state: directory
+    recurse: yes
+    path: '{{ item.path }}'
+    owner: '{{ item.owner }}'
+    group: '{{ item.group }}'
+    mode: '{{ item.mode }}'
+  loop: '{{ init_directories }}'

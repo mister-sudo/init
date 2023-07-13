@@ -1,0 +1,7 @@
+galaxy_info:
+  role_name: init
+  author: mister-sudo
+  description: Basic role for server initiation
+  company:
+  license: BSD
+dependencies: []
