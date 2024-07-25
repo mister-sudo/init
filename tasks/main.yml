@@ -29,6 +29,7 @@
     - software-properties-common
     - ntp
     - ntpdate
+    - ncdu
 
 - name: Enable NTPD serive
   service: name=ntp state=started enabled=yes
